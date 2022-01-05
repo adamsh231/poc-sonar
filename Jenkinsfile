@@ -1,26 +1,22 @@
-pipeline{
+pipeline {
     agent any
-
-    triggers {
-        githubPush()
-    }
-
     stages {
-       stage('Build') {
-           steps {
-               echo 'Building..'
-           }
-       }
-       stage('Test') {
-           steps {
-               echo 'Testing..'
-           }
-       }
-       stage('Deploy') {
-           steps {
-               echo 'Deploying....'
-           }
-       }
-   }
-
+        stage('Clone sources') {
+            steps {
+                git url: 'https://github.com/adamsh231/poc-sonar.git'
+            }
+        }
+        stage('Sonarqube analysis') {
+            steps {
+                withSonarQubeEnv('Sonarqube') {
+                    sh "./gradlew sonarqube"
+                }
+            }
+        }
+        stage("Quality gate") {
+            steps {
+                waitForQualityGate abortPipeline: true
+            }
+        }
+    }
 }
