@@ -4,11 +4,4 @@ pipeline{
     triggers {
         githubPush()
     }
-
-    stages{
-        stage("build-master"){
-
-        }
-    }
-
 }
